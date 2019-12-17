@@ -3,7 +3,13 @@ using System.Threading.Tasks;
 
 namespace StatEditor
 {
-    public class PersistenceManager
+    public interface IPersistenceManager
+    {
+        Task<string> LoadEntitiesDataAsync(string uri);
+        Task SaveEntitiesAsync(string uri, string data);
+    }
+
+    public class PersistenceManager : IPersistenceManager
     {
         public Task<string> LoadEntitiesDataAsync(string uri)
         {

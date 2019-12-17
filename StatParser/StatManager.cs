@@ -5,7 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace StatParser
 {
-    public class StatManager
+    public interface IStatManager
+    {
+        List<GameEntity> Deserialize(string data);
+        string Serialize(IList<GameEntity> entities);
+    }
+
+    public class StatManager : IStatManager
     {
         private const string RegEx = "\\\"([a-zA-Z0-9_ ;]+)\\\"|(\\w+)";
 

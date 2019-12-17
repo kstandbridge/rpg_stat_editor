@@ -14,11 +14,13 @@ namespace StatEditor.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly PersistenceManager _persistenceManager;
-        private readonly StatManager _statManager;
+        private readonly IPersistenceManager _persistenceManager;
+        private readonly IStatManager _statManager;
         private GameEntityViewModel _selectedItem;
 
-        public MainViewModel(PersistenceManager persistenceManager, StatManager statManager)
+        public MainViewModel(
+            IPersistenceManager persistenceManager,
+            IStatManager statManager)
         {
             _statManager = statManager;
             _persistenceManager = persistenceManager;
