@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -28,9 +29,10 @@ namespace StatParser
                             case "new":
                                 var next = match.NextMatch();
                                 var after = next.NextMatch();
+                                var entityName = after.Value.Trim('\"');
                                 currentEntity = new GameEntity
                                 {
-                                    Name = after.Value.Trim('\"')
+                                    Name = entityName
                                 };
                                 output.Add(currentEntity);
                                 break;
@@ -38,12 +40,21 @@ namespace StatParser
                                 currentEntity.Type = match.NextMatch().Value.Trim('\"');
                                 break;
                             case "using":
-                                currentEntity.Using = match.NextMatch().Value.Trim('\"');
+                                var entity = match.NextMatch().Value.Trim('\"');
+                                currentEntity.Using = entity;
+                                var parent = output.FirstOrDefault(o => o.Name == entity);
+                                if (parent != null)
+                                {
+                                    currentEntity.Data = new Dictionary<string, string>(parent.Data);
+                                }
+
                                 break;
                             case "data":
                                 var dataType = match.NextMatch();
                                 var dataValue = dataType.NextMatch();
-                                currentEntity.Data.Add(dataType.Value.Trim('\"'), dataValue.Value.Trim('\"'));
+                                var key = dataType.Value.Trim('\"');
+                                var value = dataValue.Value.Trim('\"');
+                                currentEntity.Data[key] = value;
                                 break;
                         }
                     }
@@ -61,15 +72,26 @@ namespace StatParser
                 sb.AppendLine($"new entry \"{gameEntity.Name}\"");
                 sb.AppendLine($"type \"{gameEntity.Type}\"");
                 sb.AppendLine($"using \"{gameEntity.Using}\"");
+                GameEntity parentEntity = null;
+                if (!string.IsNullOrWhiteSpace(gameEntity.Using))
+                {
+                    parentEntity = entities.SingleOrDefault(e => e.Name == gameEntity.Using);
+                }
+
                 foreach (var data in gameEntity.Data)
                 {
-                    sb.AppendLine($"data \"{data.Key}\" \"{data.Value}\"");
+                    if (parentEntity == null
+                        || !parentEntity.Data.ContainsKey(data.Key)
+                        || parentEntity.Data[data.Key] != data.Value)
+                    {
+                        sb.AppendLine($"data \"{data.Key}\" \"{data.Value}\"");
+                    }
                 }
 
                 sb.AppendLine();
             }
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
     }
 }
