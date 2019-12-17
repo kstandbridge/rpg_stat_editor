@@ -64,6 +64,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands.cs" />
+    <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="PersistenceManager.cs" />
     <Compile Include="ViewModels\GameEntityDataViewModel.cs" />
     <Compile Include="ViewModels\GameEntityViewModel.cs" />
@@ -111,5 +112,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

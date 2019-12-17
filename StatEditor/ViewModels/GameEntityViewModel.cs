@@ -9,12 +9,21 @@ namespace StatEditor.ViewModels
 {
     public class GameEntityViewModel : INotifyPropertyChanged
     {
-        private readonly GameEntity _gameEntity;
         private GameEntityDataViewModel _selectedData;
+        private string _name;
+        private string _type;
+        private string _using;
+
+        public GameEntityViewModel(string name)
+        : this(new GameEntity{Name = name})
+        {
+        }
 
         public GameEntityViewModel(GameEntity gameEntity)
         {
-            _gameEntity = gameEntity;
+            _name = gameEntity.Name;
+            _type = gameEntity.Type;
+            _using = gameEntity.Using;
             Data = new ObservableCollection<GameEntityDataViewModel>();
             foreach (var data in gameEntity.Data)
             {
@@ -38,33 +47,33 @@ namespace StatEditor.ViewModels
 
         public string Name
         {
-            get => _gameEntity.Name;
+            get => _name;
             set
             {
-                if (value == _gameEntity.Name) return;
-                _gameEntity.Name = value;
+                if (value == _name) return;
+                _name = value;
                 OnPropertyChanged();
             }
         }
 
         public string Type
         {
-            get => _gameEntity.Type;
+            get => _type;
             set
             {
-                if (value == _gameEntity.Type) return;
-                _gameEntity.Type = value;
+                if (value == _type) return;
+                _type = value;
                 OnPropertyChanged();
             }
         }
 
         public string Using
         {
-            get => _gameEntity.Using;
+            get => _using;
             set
             {
-                if (value == _gameEntity.Using) return;
-                _gameEntity.Using = value;
+                if (value == _using) return;
+                _using = value;
                 OnPropertyChanged();
             }
         }

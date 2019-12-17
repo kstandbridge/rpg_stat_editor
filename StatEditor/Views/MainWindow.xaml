@@ -3,8 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:StatEditor.ViewModels" mc:Ignorable="d" Title="Stat Editor" Height="450" Width="800"
+        xmlns:viewModels="clr-namespace:StatEditor.ViewModels"
+        xmlns:converters="clr-namespace:StatEditor.Converters"
+        mc:Ignorable="d" Title="Stat Editor" Height="450" Width="800"
         d:DataContext="{d:DesignInstance viewModels:MainViewModel}">
+    <Window.Resources>
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -19,6 +24,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button Padding="5" Margin="3" Grid.Column="0" Grid.Row="0" Content="Load" Command="{Binding LoadCommand}"/>
             <Button Padding="5" Margin="3" Grid.Column="1" Grid.Row="0" Content="Save" Command="{Binding SaveCommand}"/>
@@ -30,9 +36,11 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button Padding="5" Margin="3" Grid.Column="0" Grid.Row="2" Content="Add" Command="{Binding AddCommand}"/>
+            <Button Padding="5" Margin="3" Grid.Column="1" Grid.Row="2" Content="Remove" Command="{Binding RemoveCommand}"/>
         </Grid>
         <!-- Editor -->
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Grid Grid.Column="1" Grid.Row="0" IsEnabled="{Binding SelectedItem, Converter = {StaticResource NullToBooleanConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
