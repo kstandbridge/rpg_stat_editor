@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using StatEditor.Properties;
@@ -9,18 +10,22 @@ namespace StatEditor.ViewModels
 {
     public class GameEntityViewModel : INotifyPropertyChanged
     {
+        private readonly GameEntity _gameEntity;
+        private readonly ObservableCollection<GameEntityViewModel> _entities;
         private GameEntityDataViewModel _selectedData;
         private string _name;
         private string _type;
         private string _using;
 
-        public GameEntityViewModel(string name)
-        : this(new GameEntity{Name = name})
+        public GameEntityViewModel(string name, ObservableCollection<GameEntityViewModel> entities)
+        : this(new GameEntity{Name = name}, entities)
         {
         }
 
-        public GameEntityViewModel(GameEntity gameEntity)
+        public GameEntityViewModel(GameEntity gameEntity, ObservableCollection<GameEntityViewModel> entities)
         {
+            _gameEntity = gameEntity;
+            _entities = entities;
             _name = gameEntity.Name;
             _type = gameEntity.Type;
             _using = gameEntity.Using;
@@ -73,12 +78,40 @@ namespace StatEditor.ViewModels
             set
             {
                 if (value == _using) return;
+                RemoveInheritedProperties(_entities.FirstOrDefault(e => e.Name == _using));
                 _using = value;
                 OnPropertyChanged();
+                AddInheritedProperties(_entities.FirstOrDefault(e => e.Name == _using));
             }
         }
 
-        public ObservableCollection<GameEntityDataViewModel> Data { get;  }
+        private void RemoveInheritedProperties(GameEntityViewModel parent)
+        {
+            if (parent == null) return;
+            foreach (var data in Data.ToList())
+            {
+                var existingData = parent.Data.FirstOrDefault(d => d.Type == data.Type);
+                if (existingData != null && existingData.Value == data.Value)
+                {
+                    Data.Remove(data);
+                }
+            }
+        }
+
+        private void AddInheritedProperties(GameEntityViewModel parent)
+        {
+            if (parent == null) return;
+            foreach (var data in parent.Data)
+            {
+                var existingData = Data.FirstOrDefault(d => d.Type == data.Type);
+                if (existingData == null)
+                {
+                    Data.Add(new GameEntityDataViewModel(data.Type, data.Value));
+                }
+            }
+        }
+
+        public ObservableCollection<GameEntityDataViewModel> Data { get; set; }
 
         public GameEntityDataViewModel SelectedData
         {

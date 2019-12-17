@@ -40,7 +40,7 @@ namespace StatEditor.ViewModels
 
         private Task OnAddCommand()
         {
-            GameEntities.Add(new GameEntityViewModel($"Entity_{GameEntities.Count + 1}"));
+            GameEntities.Add(new GameEntityViewModel($"Entity_{GameEntities.Count + 1}", GameEntities));
             SaveCommand.NotifyCanExecuteChanged();
             return Task.CompletedTask;
         }
@@ -84,7 +84,7 @@ namespace StatEditor.ViewModels
             GameEntities.Clear();
             foreach (var gameEntity in entities)
             {
-                GameEntities.Add(new GameEntityViewModel(gameEntity));
+                GameEntities.Add(new GameEntityViewModel(gameEntity, GameEntities));
             }
 
             EntityNames.Clear();
